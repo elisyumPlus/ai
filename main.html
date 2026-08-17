@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NRUS AI — Müşteri Paneli</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+:root{
+  --black:#030303;--black2:#070708;--panel:#0a0a0b;--panel2:#101012;
+  --grid:#111214;--border:#252629;--border2:#303238;
+  --text:#f3f3f4;--muted:#77797f;
+  --cyan:#22dff5;--purple:#a96cff;--yellow:#e8bd38;--green:#32d99a;--red:#ff5d76;--blue:#6b86ff
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;min-height:100%;
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--text);background:var(--black)
+}
+body{
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:35px 35px;
+}
+body:after{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 0,rgba(255,255,255,.025),transparent 35%)}
+button,input,textarea,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+
+/* LOGO */
+.logo{display:inline-flex;align-items:center;gap:10px;font-size:22px;font-weight:800;letter-spacing:-.7px}
+.logo-mark{
+  width:33px;height:33px;border-radius:10px;display:grid;place-items:center;color:#fff;
+  font-size:18px;font-weight:900;background:linear-gradient(145deg,#ff5acb,#9c66ff 58%,#50cbff);
+  border:1px solid rgba(255,255,255,.14);box-shadow:0 0 20px rgba(156,102,255,.18)
+}
+.logo-text{color:#f1f1f2!important;background:none!important;-webkit-text-fill-color:initial!important}
+
+/* AUTH */
+.auth-screen{min-height:100vh;display:grid;place-items:center;padding:24px;background:#030303}
+.auth-card{
+  width:min(420px,100%);background:#09090a;border:1px solid #26272a;
+  border-radius:16px;padding:30px;box-shadow:0 30px 100px rgba(0,0,0,.55)
+}
+.auth-sub{margin:7px 0 24px;color:#6e7076;font-size:13px}
+.tabs{display:flex;gap:4px;padding:4px;background:#050506;border:1px solid #191a1d;border-radius:9px;margin-bottom:18px}
+.tabs button{flex:1;border:0;background:transparent;color:#66686e;padding:10px;border-radius:7px}
+.tabs button.active{color:#f2f2f2;background:#151517}
+.field{margin:14px 0}
+.field label{display:block;font-size:11px;font-weight:700;color:#999ba0;margin-bottom:7px}
+.field input,.field textarea,.field select{
+  width:100%;padding:11px 12px;border-radius:8px;border:1px solid #2a2b2e;
+  outline:0;color:#eee;background:#050506
+}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:#45464b}
+.btn{
+  border:1px solid #2c2d31;background:#111214;color:#eee;border-radius:9px;
+  padding:10px 14px;font-weight:700;transition:.15s;box-shadow:none
+}
+.btn:hover{background:#18191b;border-color:#3a3b40;transform:none}
+.btn.secondary{background:#0c0d0e}.btn.success{background:#0c1d16;border-color:#1d4d3c;color:#82e3bb}
+.btn.danger{background:#210d12;border-color:#4d2029;color:#ffadb8}
+.btn.warning{background:#1d1709;border-color:#4e3d18;color:#e5c977}.btn.auto{width:auto}
+.link-btn{border:0;background:none;color:#a7a1e9;padding:0;font-size:12px}
+
+/* SIDEBAR */
+.sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:255px;background:#050506;
+  border-right:1px solid #1a1b1d;z-index:40;padding:22px 16px 18px
+}
+.side-brand{padding:3px 12px 28px}
+.side-brand .small{margin-top:11px;font-size:10px;color:#666970;letter-spacing:.7px}
+.nav{display:flex;flex-direction:column;gap:6px}
+.nav button{
+  width:100%;display:flex;align-items:center;gap:12px;text-align:left;
+  padding:10px 11px;border:1px solid transparent;border-radius:14px;
+  color:#8b8d92;background:transparent;transition:.15s
+}
+.nav button:hover{color:#ddd;background:#0d0e10}
+.nav button.active{
+  color:#f0f0f2;background:#101011;border-color:#27282b;
+  box-shadow:0 0 0 1px rgba(255,255,255,.01)
+}
+.nav button .menu-icon,.nav button .icon,.nav button i,.nav button svg{
+  width:34px!important;height:34px!important;min-width:34px!important;
+  display:grid!important;place-items:center!important;border-radius:10px!important;
+  padding:7px!important;color:#aeb0b5!important;background:#111214!important;
+  border:1px solid #28292c!important;box-shadow:none!important;text-shadow:none!important;filter:none!important
+}
+.nav button:hover .menu-icon,.nav button:hover .icon,.nav button:hover i,.nav button:hover svg{
+  background:#17181a!important;color:#dedfe2!important;border-color:#35363a!important
+}
+.logout{position:absolute;left:16px;bottom:17px;width:calc(100% - 32px);background:#09090a!important}
+
+/* MAIN */
+.main{margin-left:255px;min-height:100vh;padding:38px 50px 60px;max-width:none}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:32px}
+.top-title h1{margin:0;font-size:30px;letter-spacing:-1px}
+.top-title p{margin:6px 0 0;color:#7a7c81;font-size:13px}
+.user-pill{padding:8px 11px;border:1px solid #232427;background:#0b0b0c;border-radius:999px;color:#8f9197;font-size:11px}
+.mobile-menu{display:none}
+
+/* WIDE CARDS */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.cards{display:grid;grid-template-columns:1fr;gap:12px}
+.card{
+  position:relative;padding:19px;border-radius:16px;background:rgba(12,12,13,.82);
+  border:1px solid #202124;box-shadow:none
+}
+.card:hover{border-color:#2e3034}
+.section{margin-top:18px}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.section-head h2,.card h2{margin:0;font-size:16px}
+.product{
+  min-height:118px;display:flex;align-items:center;justify-content:space-between;gap:26px
+}
+.product h3{margin:0 0 8px;font-size:15px}
+.product p{margin:0;color:#75777c;font-size:12px;line-height:1.55;max-width:900px}
+.price{font-size:21px;font-weight:800;margin:0 0 10px}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse}
+th,td{padding:12px 10px;border-bottom:1px solid #1b1c1f;text-align:left;font-size:12px;vertical-align:top}
+th{color:#676a70;font-size:10px;text-transform:uppercase;letter-spacing:.45px}
+.badge{display:inline-block;padding:5px 8px;border-radius:999px;background:#151618;border:1px solid #26282b;color:#a7a9ae;font-size:10px}
+.badge.ok{background:#0c1914;border-color:#173b2c;color:#76ddb2}.badge.bad{background:#1a0c10;border-color:#402028;color:#ed8d9d}.badge.warn{background:#191409;border-color:#433719;color:#d8bc6e}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.empty{
+  min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:#65676d;border:1px dashed #2c2d30;border-radius:18px;background:rgba(8,8,9,.65)
+}
+.msg{padding:11px;border-radius:9px;background:#111214;border:1px solid #252629;color:#b9bbc0;font-size:12px;margin:10px 0}
+.msg.error{background:#180c10;color:#e5a1ad;border-color:#41212a}.msg.ok{background:#0b1913;color:#92dec0;border-color:#183c2d}.msg.warn{background:#1a1509;color:#dbc67d;border-color:#41351b}
+.modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.82)}
+.modal-box{width:min(560px,100%);padding:22px;border-radius:15px;background:#0b0b0c;border:1px solid #292a2d;box-shadow:0 30px 100px #000}
+.modal-box h2{margin:0 0 7px}.modal-actions{display:flex;gap:7px;margin-top:16px}.modal-actions .btn{flex:1}
+
+@media(max-width:1000px){.main{padding:28px 30px}.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:720px){
+  .sidebar{transform:translateX(-100%);transition:.18s}.sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;padding:18px}.mobile-menu{display:inline-block}.user-pill{display:none}
+  .topbar{align-items:flex-start}.top-title h1{font-size:24px}.grid{grid-template-columns:1fr}.product{display:block}.product .btn{margin-top:15px}
+}
+</style>>>>
+
+<style id="final-ui-overrides">
+/* Kullanıcının istediği NRUS AI logosu */
+.logo{gap:9px!important;font-size:23px!important;font-weight:900!important;letter-spacing:-1px!important}
+.logo-mark{
+  width:34px!important;height:34px!important;border-radius:9px!important;
+  display:grid!important;place-items:center!important;
+  color:#fff!important;font-size:20px!important;font-weight:900!important;
+  background:linear-gradient(145deg,#ff45d7 0%,#9d55ff 55%,#4fbcff 100%)!important;
+  border:1px solid rgba(255,255,255,.18)!important;
+  box-shadow:0 5px 22px rgba(151,74,255,.30)!important;
+}
+.logo-text{
+  color:#f4f4f7!important;
+  background:linear-gradient(90deg,#f4f4f7 0%,#dfe5ff 55%,#78cfff 100%)!important;
+  -webkit-background-clip:text!important;background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;
+}
+
+/* Hizmetler: dikey küçük kartlar yerine yatay uzun satırlar */
+.services-grid,.service-grid,.cards{
+  grid-template-columns:1fr!important;
+  gap:10px!important;
+}
+.services-grid .card,.service-grid .card,.cards .card{
+  min-height:120px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:24px!important;
+  padding:20px 22px!important;
+  border-radius:12px!important;
+}
+.services-grid .card > div,.service-grid .card > div,.cards .card > div{
+  flex:1!important;
+}
+.services-grid .card .btn,.service-grid .card .btn,.cards .card .btn{
+  flex:0 0 auto!important;
+}
+.services-grid .card h3,.service-grid .card h3,.cards .card h3{
+  margin:0 0 6px!important;
+}
+.services-grid .card p,.service-grid .card p,.cards .card p{
+  min-height:0!important;
+  margin:0!important;
+  max-width:800px!important;
+}
+@media(max-width:720px){
+  .services-grid .card,.service-grid .card,.cards .card{
+    display:block!important;
+  }
+  .services-grid .card .btn,.service-grid .card .btn,.cards .card .btn{
+    margin-top:14px!important;
+  }
+}
+</style>
+
+
+<style id="sidebar-icon-style">
+/* Sol menü ikonları: renkli, sade ve modern kutular */
+.nav button{
+  display:flex!important;
+  align-items:center!important;
+  gap:14px!important;
+}
+.nav button .icon,
+.nav button i,
+.nav button svg{
+  width:38px!important;
+  height:38px!important;
+  min-width:38px!important;
+  border-radius:11px!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:9px!important;
+  background:#111317!important;
+  border:1px solid #252830!important;
+  color:#9da4ff!important;
+  stroke:currentColor!important;
+  fill:none!important;
+  transition:.18s ease!important;
+}
+
+/* Menü sırasına göre farklı vurgu renkleri */
+.nav button:nth-child(1) .icon,
+.nav button:nth-child(1) i,
+.nav button:nth-child(1) svg{
+  color:#9b91ff!important;background:#11131e!important;border-color:#302c61!important;
+}
+.nav button:nth-child(2) .icon,
+.nav button:nth-child(2) i,
+.nav button:nth-child(2) svg{
+  color:#ff62c9!important;background:#1b0b18!important;border-color:#562042!important;
+}
+.nav button:nth-child(3) .icon,
+.nav button:nth-child(3) i,
+.nav button:nth-child(3) svg{
+  color:#39d8f4!important;background:#071a20!important;border-color:#0a5966!important;
+}
+.nav button:nth-child(4) .icon,
+.nav button:nth-child(4) i,
+.nav button:nth-child(4) svg{
+  color:#45d6a0!important;background:#071b15!important;border-color:#0c5b42!important;
+}
+.nav button:nth-child(5) .icon,
+.nav button:nth-child(5) i,
+.nav button:nth-child(5) svg{
+  color:#d4a7ff!important;background:#160d20!important;border-color:#4c2867!important;
+}
+.nav button:hover .icon,
+.nav button:hover i,
+.nav button:hover svg{
+  transform:translateY(-1px);
+  filter:brightness(1.12);
+}
+.nav button.active .icon,
+.nav button.active i,
+.nav button.active svg{
+  box-shadow:0 0 0 1px rgba(255,255,255,.03),0 7px 22px rgba(0,0,0,.28);
+}
+</style>
+
+
+<style id="colored-sidebar-icons">
+/* SOL MENÜ: İKONLARIN KENDİLERİ RENKLİ */
+.nav button{
+  display:flex!important;
+  align-items:center!important;
+  gap:13px!important;
+  color:#8d9199!important;
+}
+.menu-icon{
+  width:38px!important;
+  height:38px!important;
+  min-width:38px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border-radius:11px!important;
+  font-size:17px!important;
+  font-weight:900!important;
+  line-height:1!important;
+  background:#101113!important;
+  border:1px solid #24262a!important;
+  transition:.18s ease!important;
+  text-shadow:0 0 12px currentColor!important;
+}
+
+/* Her ikonun kendi rengi */
+.icon-services{color:#9b8cff!important;background:#120f22!important;border-color:#40347c!important}
+.icon-products{color:#ff58c8!important;background:#210d1b!important;border-color:#6b2850!important}
+.icon-tickets{color:#36d9f5!important;background:#071c22!important;border-color:#126173!important}
+.icon-settings{color:#aeb5c2!important;background:#111419!important;border-color:#333943!important}
+.icon-admin{color:#9b8cff!important;background:#120f22!important;border-color:#40347c!important}
+.icon-approvals{color:#60e2ae!important;background:#071d15!important;border-color:#146144!important}
+.icon-users{color:#65b8ff!important;background:#081725!important;border-color:#174b70!important}
+.icon-requests{color:#ffb85c!important;background:#21170a!important;border-color:#684719!important}
+
+/* Menüde yazı rengi sabit, ikon rengi değişmesin */
+.nav button:hover .menu-icon{
+  transform:translateY(-1px) scale(1.03)!important;
+  filter:brightness(1.16)!important;
+}
+.nav button.active .menu-icon{
+  box-shadow:0 0 0 1px rgba(255,255,255,.04),0 5px 20px rgba(0,0,0,.35)!important;
+}
+</style>
+
+
+<style id="bright-icon-colors">
+/* Daha canlı ikon renkleri */
+.menu-icon{
+  font-weight:900!important;
+  text-shadow:0 0 10px currentColor,0 0 20px currentColor!important;
+  border-width:1px!important;
+}
+
+/* Açık mor */
+.icon-services,.icon-admin{
+  color:#b58cff!important;
+  background:rgba(181,140,255,.12)!important;
+  border-color:rgba(181,140,255,.55)!important;
+}
+
+/* Açık yeşil */
+.icon-approvals{
+  color:#63f5a8!important;
+  background:rgba(99,245,168,.11)!important;
+  border-color:rgba(99,245,168,.52)!important;
+}
+
+/* Açık mavi */
+.icon-tickets,.icon-users{
+  color:#55d9ff!important;
+  background:rgba(85,217,255,.11)!important;
+  border-color:rgba(85,217,255,.55)!important;
+}
+
+/* Açık kırmızı */
+.icon-products{
+  color:#ff6675!important;
+  background:rgba(255,102,117,.11)!important;
+  border-color:rgba(255,102,117,.55)!important;
+}
+
+/* Canlı turuncu */
+.icon-requests{
+  color:#ffb45c!important;
+  background:rgba(255,180,92,.11)!important;
+  border-color:rgba(255,180,92,.55)!important;
+}
+
+/* Ayarlar: parlak beyaz */
+.icon-settings{
+  color:#e6e9ef!important;
+  background:rgba(230,233,239,.08)!important;
+  border-color:rgba(230,233,239,.35)!important;
+}
+</style>
+
+
+<style id="final-neutral-icons">
+.nav button .menu-icon,
+.nav button .icon,
+.nav button i,
+.nav button svg{
+  color:#aeb2ba!important;
+  background:#111214!important;
+  border:1px solid #292b30!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  filter:none!important;
+}
+.nav button:hover .menu-icon,
+.nav button:hover .icon,
+.nav button:hover i,
+.nav button:hover svg{
+  color:#f0f1f3!important;
+  background:#17191c!important;
+  border-color:#3a3d43!important;
+}
+.nav button.active .menu-icon,
+.nav button.active .icon,
+.nav button.active i,
+.nav button.active svg{
+  color:#ffffff!important;
+  background:#1b1d21!important;
+  border-color:#44474e!important;
+  box-shadow:none!important;
+}
+</style>
+
+</head>
+<body>
+<section id="authScreen" class="auth-screen"><div class="auth-card"><div class="logo"><span class="logo-mark">N</span><span class="logo-text">NRUS AI</span></div><div class="auth-sub">Müşteri ve yönetim portalı</div><div class="tabs"><button id="tabLogin" class="active">Giriş Yap</button><button id="tabRegister">Kayıt Ol</button></div><div id="authMessage"></div><form id="authForm"><div class="field"><label>E-posta</label><input id="authEmail" type="email" autocomplete="email" required></div><div class="field"><label>Şifre</label><input id="authPassword" type="password" minlength="6" autocomplete="current-password" required></div><button id="authButton" class="btn" style="width:100%">Giriş Yap</button><button id="forgotButton" type="button" class="link-btn">Şifremi unuttum</button></form></div></section>
+<section id="appScreen" class="app hidden"><aside id="sidebar" class="sidebar"><div class="side-brand"><div class="logo"><span class="logo-mark">N</span><span class="logo-text">NRUS AI</span></div><div class="small" id="panelLabel">Müşteri Paneli</div></div><nav id="userNav" class="nav"><button data-page="services"><span class="menu-icon icon-services">✦</span>Hizmetlerim</button><button data-page="products"><span class="menu-icon icon-products">◫</span>Ürünler</button><button data-page="tickets"><span class="menu-icon icon-tickets">⌁</span>Destek Talepleri</button><button data-page="settings"><span class="menu-icon icon-settings">⚙</span>Ayarlar</button></nav><nav id="adminNav" class="nav hidden"><button data-page="admin"><span class="menu-icon icon-admin">◉</span>Admin Dashboard</button><button data-page="approvals"><span class="menu-icon icon-approvals">✓</span>Üyelik Onayları</button><button data-page="users"><span class="menu-icon icon-users">◌</span>Kullanıcılar</button><button data-page="adminProducts"><span class="menu-icon icon-products">◫</span>Ürün Yönetimi</button><button data-page="requests"><span class="menu-icon icon-requests">↳</span>Ürün Başvuruları</button><button data-page="adminServices"><span class="menu-icon icon-services">✦</span>Hizmet Yönetimi</button><button data-page="adminTickets"><span class="menu-icon icon-tickets">⌁</span>Destek Talepleri</button></nav><button id="logoutButton" class="btn danger logout">Çıkış Yap</button></aside><main class="main"><div class="topbar"><div class="top-title"><button id="mobileMenu" class="btn secondary auto mobile-menu">☰</button><h1 id="pageTitle" style="display:inline-block;margin-left:8px">Hizmetlerim</h1><p id="pageDescription">Size tanımlanan lisans ve hesap bilgileri.</p></div><div id="userPill" class="user-pill">—</div></div><div id="content"></div></main></section>
+<div id="modal" class="modal hidden"><div id="modalBox" class="modal-box"></div></div>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut,updatePassword,sendPasswordResetEmail}from"https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,addDoc,updateDoc,deleteDoc,collection,getDocs,query,where,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyCqWXf6CSdj5g07lJ6ldCAv_4EpHiyyLvM",authDomain:"nrus-ai.firebaseapp.com",projectId:"nrus-ai",storageBucket:"nrus-ai.firebasestorage.app",messagingSenderId:"297309993795",appId:"1:297309993795:web:3551efed702f32eca70df6",measurementId:"G-LZE5H5R8Q9"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);const $=id=>document.getElementById(id);let registerMode=false,currentUser=null,currentProfile=null,adminUsersCache=[];
+const meta={dashboard:["Dashboard","Hesabınıza genel bakış."],services:["Hizmetlerim","Size tanımlanan lisans ve hesap bilgileri."],products:["Ürünler","Ürünleri inceleyip başvuru yapın."],tickets:["Destek Talepleri","Destek taleplerinizi yönetin."],settings:["Ayarlar","Hesap ve güvenlik ayarlarınız."],admin:["Admin Dashboard","Sistem genel bakışı."],approvals:["Üyelik Onayları","Bekleyen kayıtları yönetin."],users:["Kullanıcılar","Kullanıcı hesaplarını yönetin."],adminProducts:["Ürün Yönetimi","Ürün ekleyin ve yönetin."],requests:["Ürün Başvuruları","Kullanıcı ürün başvurularını yönetin."],adminServices:["Hizmet Yönetimi","Kullanıcılara lisans ve hesap tanımlayın."],adminTickets:["Destek Talepleri","Gelen destek taleplerini yönetin."]};
+function esc(v=""){return String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}function dt(x){return x?.toDate?x.toDate().toLocaleString("tr-TR"):"—"}function authMsg(t="",c=""){$("authMessage").innerHTML=t?`<div class="msg ${c}">${esc(t)}</div>`:""}function err(e){return({"auth/invalid-credential":"E-posta veya şifre hatalı.","auth/email-already-in-use":"Bu e-posta zaten kayıtlı.","auth/weak-password":"Şifre en az 6 karakter olmalı.","auth/invalid-email":"Geçerli bir e-posta girin.","auth/too-many-requests":"Çok fazla deneme yapıldı. Daha sonra tekrar deneyin."}[e?.code]||e?.message||"Bir hata oluştu.")}
+function mode(m){registerMode=m==="register";$('tabLogin').classList.toggle('active',!registerMode);$('tabRegister').classList.toggle('active',registerMode);$('authButton').textContent=registerMode?'Kayıt Ol':'Giriş Yap';$('forgotButton').classList.toggle('hidden',registerMode);authMsg("")}$("tabLogin").onclick=()=>mode("login");$("tabRegister").onclick=()=>mode("register");
+$("authForm").onsubmit=async e=>{e.preventDefault();let email=$("authEmail").value.trim().toLowerCase(),password=$("authPassword").value;$("authButton").disabled=true;try{if(registerMode){let c=await createUserWithEmailAndPassword(auth,email,password);await setDoc(doc(db,"users",c.user.uid),{email,role:"user",status:"pending",createdAt:serverTimestamp()});await signOut(auth);$("authForm").reset();mode("login");authMsg("Kayıt başarılı. Admin onayından sonra giriş yapabilirsiniz.","ok")}else await signInWithEmailAndPassword(auth,email,password)}catch(e){authMsg(err(e),"error")}finally{$("authButton").disabled=false;$('authButton').textContent=registerMode?'Kayıt Ol':'Giriş Yap'}};
+$("forgotButton").onclick=async()=>{let e=$("authEmail").value.trim().toLowerCase();if(!e)return authMsg("Önce e-posta adresinizi girin.","warn");try{await sendPasswordResetEmail(auth,e);authMsg("Şifre sıfırlama bağlantısı gönderildi.","ok")}catch(x){authMsg(err(x),"error")}};
+$("logoutButton").onclick=()=>signOut(auth);$("mobileMenu").onclick=()=>$('sidebar').classList.toggle('open');
+onAuthStateChanged(auth,async u=>{if(!u){currentUser=null;currentProfile=null;$('authScreen').classList.remove('hidden');$('appScreen').classList.add('hidden');return}try{let s=await getDoc(doc(db,"users",u.uid));if(!s.exists()){await signOut(auth);authMsg("Kullanıcı profiliniz bulunamadı.","error");return}currentUser=u;currentProfile=s.data();if(currentProfile.status!=="approved"){await signOut(auth);authMsg(currentProfile.status==="rejected"?"Başvurunuz reddedildi.":"Hesabınız henüz admin tarafından onaylanmadı.","error");return}if(currentProfile.role!=="admin"&&currentProfile.role!=="user"){await signOut(auth);authMsg("Geçersiz kullanıcı rolü.","error");return}$('authScreen').classList.add('hidden');$('appScreen').classList.remove('hidden');$('userPill').textContent=(currentProfile.role==='admin'?'ADMIN · ':'')+u.email;$('panelLabel').textContent=currentProfile.role==='admin'?'Yönetim Paneli':'Müşteri Paneli';$('userNav').classList.toggle('hidden',currentProfile.role==='admin');$('adminNav').classList.toggle('hidden',currentProfile.role!=='admin');await navigate(currentProfile.role==='admin'?'admin':'services')}catch(e){await signOut(auth);authMsg("Profil okunamadı: "+err(e),"error")}});
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>navigate(b.dataset.page));
+async function navigate(p){$('sidebar').classList.remove('open');document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===p));$('pageTitle').textContent=meta[p]?.[0]||'Panel';$('pageDescription').textContent=meta[p]?.[1]||'';$('content').innerHTML='<div class="card">Yükleniyor...</div>';try{if(p==='dashboard')await userDash();else if(p==='services')await services();else if(p==='products')await products();else if(p==='tickets')await tickets();else if(p==='settings')settings();else if(p==='admin')await adminDash();else if(p==='approvals')await approvals();else if(p==='users')await users();else if(p==='adminProducts')await adminProducts();else if(p==='requests')await requests();else if(p==='adminServices')await adminServices();else if(p==='adminTickets')await adminTickets()}catch(e){$('content').innerHTML=`<div class="msg error">${esc(err(e))}</div>`}}
+async function userDash(){let[a,b,c]=await Promise.all([getDocs(query(collection(db,'services'),where('userId','==',currentUser.uid))),getDocs(collection(db,'products')),getDocs(query(collection(db,'tickets'),where('userId','==',currentUser.uid)))]);$('content').innerHTML=`<div class="grid"><div class="card stat"><div class="label">Hizmetlerim</div><div class="num">${a.size}</div></div><div class="card stat"><div class="label">Ürünler</div><div class="num">${b.size}</div></div><div class="card stat"><div class="label">Destek</div><div class="num">${c.size}</div></div><div class="card stat"><div class="label">Hesap</div><div class="num">✓</div></div></div><div class="section"><div class="card"><h2>Hoş geldiniz 👋</h2><p class="muted">Hizmetlerinizi, ürünleri ve destek taleplerinizi buradan yönetebilirsiniz.</p></div></div>`}
+async function services(){let s=await getDocs(query(collection(db,'services'),where('userId','==',currentUser.uid)));if(!s.size)return $('content').innerHTML='<div class="empty">Henüz hizmet tanımlanmamış.</div>';$('content').innerHTML=`<div class="cards">${s.docs.map(d=>{let x=d.data();return `<div class="card"><h3>${esc(x.serviceName||'Hizmet')}</h3><p class="muted">${esc(x.description||'')}</p><div class="small">Lisans Anahtarı</div><b style="word-break:break-all">${esc(x.licenseKey||'—')}</b><div class="small" style="margin-top:14px">Hesap Bilgileri</div><div style="white-space:pre-wrap;margin-top:5px">${esc(x.accountInfo||'—')}</div><div style="margin-top:14px"><span class="badge ${x.status==='active'?'ok':'warn'}">${esc(x.status||'')}</span></div></div>`}).join('')}</div>`}
+async function products(){let s=await getDocs(collection(db,'products'));if(!s.size)return $('content').innerHTML='<div class="empty">Henüz ürün yok.</div>';$('content').innerHTML=`<div class="cards">${s.docs.map(d=>{let x=d.data();return `<div class="card product"><h3>${esc(x.name||'Ürün')}</h3><p>${esc(x.description||'')}</p><div class="price">${esc(x.price||'')}</div><button class="btn" onclick='applyProduct(${JSON.stringify(d.id)},${JSON.stringify(x.name||'Ürün')})'>Başvur</button></div>`}).join('')}</div>`}
+window.applyProduct=async(id,name)=>{try{let q=await getDocs(query(collection(db,'productRequests'),where('userId','==',currentUser.uid),where('productId','==',id),where('status','==','pending')));if(q.size)return alert('Bu ürün için zaten bekleyen başvurunuz var.');await addDoc(collection(db,'productRequests'),{userId:currentUser.uid,userEmail:currentUser.email,productId:id,productName:name,status:'pending',createdAt:serverTimestamp()});alert('Başvurunuz gönderildi.')}catch(e){alert(err(e))}};
+async function tickets(){let s=await getDocs(query(collection(db,'tickets'),where('userId','==',currentUser.uid)));$('content').innerHTML=`<div class="card"><div class="section-head"><h2>Taleplerim</h2><button class="btn auto" onclick="newTicket()">+ Yeni Talep</button></div><div class="table-wrap"><table><tr><th>Konu</th><th>Mesaj</th><th>Durum</th><th>Tarih</th></tr>${s.docs.map(d=>{let x=d.data();return `<tr><td>${esc(x.subject)}</td><td>${esc(x.message)}</td><td><span class="badge ${x.status==='open'?'warn':'ok'}">${esc(x.status)}</span></td><td>${dt(x.createdAt)}</td></tr>`}).join('')||'<tr><td colspan="4">Talep yok.</td></tr>'}</table></div></div>`}
+window.newTicket=()=>modal(`<h2>Yeni Destek Talebi</h2><div class="field"><label>Konu</label><input id="ts"></div><div class="field"><label>Mesaj</label><textarea id="tm" rows="6"></textarea></div><div class="modal-actions"><button class="btn secondary" onclick="closeModal()">İptal</button><button class="btn" onclick="createTicket()">Gönder</button></div>`);window.createTicket=async()=>{let subject=$('ts').value.trim(),message=$('tm').value.trim();if(!subject||!message)return alert('Konu ve mesaj gerekli.');await addDoc(collection(db,'tickets'),{userId:currentUser.uid,userEmail:currentUser.email,subject,message,status:'open',createdAt:serverTimestamp()});closeModal();navigate('tickets')};
+function settings(){$('content').innerHTML=`<div class="card" style="max-width:620px"><h2>Hesap Ayarları</h2><div class="field"><label>E-posta</label><input value="${esc(currentUser.email)}" disabled></div><div class="field"><label>Yeni Şifre</label><input id="np" type="password" minlength="6"></div><button class="btn" onclick="changePass()">Şifreyi Güncelle</button></div>`}window.changePass=async()=>{let p=$('np').value;if(p.length<6)return alert('En az 6 karakter.');try{await updatePassword(currentUser,p);alert('Şifre güncellendi.')}catch(e){alert(err(e))}};
+async function adminDash(){let[a,b,c,d,e,f]=await Promise.all([getDocs(collection(db,'users')),getDocs(query(collection(db,'users'),where('status','==','pending'))),getDocs(collection(db,'products')),getDocs(query(collection(db,'productRequests'),where('status','==','pending'))),getDocs(query(collection(db,'tickets'),where('status','==','open'))),getDocs(collection(db,'services'))]);$('content').innerHTML=`<div class="grid"><div class="card stat"><div class="label">Kullanıcı</div><div class="num">${a.size}</div></div><div class="card stat"><div class="label">Onay Bekleyen</div><div class="num">${b.size}</div></div><div class="card stat"><div class="label">Ürün</div><div class="num">${c.size}</div></div><div class="card stat"><div class="label">Açık Destek</div><div class="num">${e.size}</div></div></div><div class="section"><div class="grid"><div class="card stat"><div class="label">Bekleyen Başvuru</div><div class="num">${d.size}</div></div><div class="card stat"><div class="label">Hizmet</div><div class="num">${f.size}</div></div></div></div>`}
+async function approvals(){let s=await getDocs(query(collection(db,'users'),where('status','==','pending')));$('content').innerHTML=`<div class="card"><h2>Bekleyen Kayıtlar</h2><div class="table-wrap"><table><tr><th>E-posta</th><th>Tarih</th><th>İşlem</th></tr>${s.docs.map(d=>{let x=d.data();return `<tr><td>${esc(x.email)}</td><td>${dt(x.createdAt)}</td><td class="actions"><button class="btn success auto" onclick='approve(${JSON.stringify(d.id)})'>Onayla</button><button class="btn danger auto" onclick='reject(${JSON.stringify(d.id)})'>Reddet</button></td></tr>`}).join('')||'<tr><td colspan="3">Bekleyen kayıt yok.</td></tr>'}</table></div></div>`}window.approve=async id=>{await updateDoc(doc(db,'users',id),{status:'approved'});navigate('approvals')};window.reject=async id=>{if(confirm('Reddedilsin mi?')){await updateDoc(doc(db,'users',id),{status:'rejected'});navigate('approvals')}};
+async function users(){let s=await getDocs(collection(db,'users'));$('content').innerHTML=`<div class="card"><h2>Kullanıcılar</h2><div class="table-wrap"><table><tr><th>E-posta</th><th>Rol</th><th>Durum</th><th>İşlem</th></tr>${s.docs.map(d=>{let x=d.data();return `<tr><td>${esc(x.email)}</td><td>${esc(x.role)}</td><td><span class="badge ${x.status==='approved'?'ok':x.status==='rejected'?'bad':'warn'}">${esc(x.status)}</span></td><td>${x.role==='admin'?'—':`<button class="btn ${x.status==='approved'?'warning':'success'} auto" onclick='setStatus(${JSON.stringify(d.id)},${JSON.stringify(x.status==='approved'?'rejected':'approved')})'>${x.status==='approved'?'Pasifleştir':'Onayla'}</button>`}</td></tr>`}).join('')}</table></div></div>`}window.setStatus=async(id,status)=>{await updateDoc(doc(db,'users',id),{status});navigate('users')};
+async function adminProducts(){let s=await getDocs(collection(db,'products'));$('content').innerHTML=`<div class="card"><div class="section-head"><h2>Ürün Yönetimi</h2><button class="btn auto" onclick="productModal()">+ Ürün Ekle</button></div><div class="table-wrap"><table><tr><th>Ürün</th><th>Fiyat</th><th>Açıklama</th><th>İşlem</th></tr>${s.docs.map(d=>{let x=d.data();return `<tr><td>${esc(x.name)}</td><td>${esc(x.price)}</td><td>${esc(x.description)}</td><td><button class="btn danger auto" onclick='delProduct(${JSON.stringify(d.id)})'>Sil</button></td></tr>`}).join('')||'<tr><td colspan="4">Ürün yok.</td></tr>'}</table></div></div>`}window.productModal=()=>modal(`<h2>Ürün Ekle</h2><div class="field"><label>Ürün Adı</label><input id="pn"></div><div class="field"><label>Fiyat</label><input id="pp"></div><div class="field"><label>Açıklama</label><textarea id="pd" rows="5"></textarea></div><div class="modal-actions"><button class="btn secondary" onclick="closeModal()">İptal</button><button class="btn" onclick="createProduct()">Kaydet</button></div>`);window.createProduct=async()=>{let name=$('pn').value.trim();if(!name)return alert('Ürün adı gerekli.');await addDoc(collection(db,'products'),{name,price:$('pp').value.trim(),description:$('pd').value.trim(),createdAt:serverTimestamp()});closeModal();navigate('adminProducts')};window.delProduct=async id=>{if(confirm('Ürün silinsin mi?')){await deleteDoc(doc(db,'products',id));navigate('adminProducts')}};
+async function requests(){let s=await getDocs(collection(db,'productRequests'));$('content').innerHTML=`<div class="card"><h2>Ürün Başvuruları</h2><div class="table-wrap"><table><tr><th>Kullanıcı</th><th>Ürün</th><th>Durum</th><th>Tarih</th><th>İşlem</th></tr>${s.docs.map(d=>{let x=d.data();return `<tr><td>${esc(x.userEmail)}</td><td>${esc(x.productName)}</td><td><span class="badge ${x.status==='completed'?'ok':x.status==='rejected'?'bad':'warn'}">${esc(x.status)}</span></td><td>${dt(x.createdAt)}</td><td>${x.status==='pending'?`<div class="actions"><button class="btn success auto" onclick='reqStatus(${JSON.stringify(d.id)},"completed")'>Kabul</button><button class="btn danger auto" onclick='reqStatus(${JSON.stringify(d.id)},"rejected")'>Reddet</button></div>`:'—'}</td></tr>`}).join('')||'<tr><td colspan="5">Başvuru yok.</td></tr>'}</table></div></div>`}window.reqStatus=async(id,status)=>{await updateDoc(doc(db,'productRequests',id),{status,processedAt:serverTimestamp(),processedBy:currentUser.uid});navigate('requests')};
+async function adminServices(){let[u,s]=await Promise.all([getDocs(query(collection(db,'users'),where('role','==','user'))),getDocs(collection(db,'services'))]);adminUsersCache=u.docs.map(d=>({id:d.id,...d.data()}));$('content').innerHTML=`<div class="card"><div class="section-head"><h2>Hizmet Yönetimi</h2><button class="btn auto" onclick="serviceModal()">+ Hizmet Tanımla</button></div><div class="table-wrap"><table><tr><th>Kullanıcı</th><th>Hizmet</th><th>Lisans</th><th>Durum</th></tr>${s.docs.map(d=>{let x=d.data();return `<tr><td>${esc(x.userEmail)}</td><td>${esc(x.serviceName)}</td><td>${esc(x.licenseKey||'—')}</td><td>${esc(x.status)}</td></tr>`}).join('')||'<tr><td colspan="4">Hizmet yok.</td></tr>'}</table></div></div>`}window.serviceModal=()=>{let o=adminUsersCache.map(u=>`<option value="${esc(u.id)}">${esc(u.email)}</option>`).join('');modal(`<h2>Hizmet Tanımla</h2><div class="field"><label>Kullanıcı</label><select id="su">${o}</select></div><div class="field"><label>Hizmet Adı</label><input id="sn"></div><div class="field"><label>Lisans Anahtarı</label><input id="sk"></div><div class="field"><label>Hesap Bilgileri</label><textarea id="si" rows="5"></textarea></div><div class="field"><label>Açıklama</label><textarea id="sd" rows="3"></textarea></div><div class="field"><label>Durum</label><select id="ss"><option value="active">active</option><option value="passive">passive</option></select></div><div class="modal-actions"><button class="btn secondary" onclick="closeModal()">İptal</button><button class="btn" onclick="createService()">Kaydet</button></div>`)};window.createService=async()=>{let uid=$('su').value,u=adminUsersCache.find(x=>x.id===uid);if(!u)return alert('Kullanıcı yok.');let name=$('sn').value.trim();if(!name)return alert('Hizmet adı gerekli.');await addDoc(collection(db,'services'),{userId:uid,userEmail:u.email,serviceName:name,licenseKey:$('sk').value.trim(),accountInfo:$('si').value.trim(),description:$('sd').value.trim(),status:$('ss').value,createdAt:serverTimestamp(),createdBy:currentUser.uid});closeModal();navigate('adminServices')};
+async function adminTickets(){let s=await getDocs(collection(db,'tickets'));$('content').innerHTML=`<div class="card"><h2>Destek Talepleri</h2><div class="table-wrap"><table><tr><th>Kullanıcı</th><th>Konu</th><th>Mesaj</th><th>Durum</th><th>Tarih</th><th>İşlem</th></tr>${s.docs.map(d=>{let x=d.data();return `<tr><td>${esc(x.userEmail)}</td><td>${esc(x.subject)}</td><td>${esc(x.message)}</td><td><span class="badge ${x.status==='open'?'warn':'ok'}">${esc(x.status)}</span></td><td>${dt(x.createdAt)}</td><td>${x.status==='open'?`<button class="btn success auto" onclick='closeTicket(${JSON.stringify(d.id)})'>Kapat</button>`:'—'}</td></tr>`}).join('')||'<tr><td colspan="6">Talep yok.</td></tr>'}</table></div></div>`}window.closeTicket=async id=>{await updateDoc(doc(db,'tickets',id),{status:'closed',closedAt:serverTimestamp(),closedBy:currentUser.uid});navigate('adminTickets')};
+function modal(h){$('modalBox').innerHTML=h;$('modal').classList.remove('hidden')}window.closeModal=()=>$('modal').classList.add('hidden');$('modal').onclick=e=>{if(e.target.id==='modal')closeModal()};
+</script></body></html>
